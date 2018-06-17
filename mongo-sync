@@ -137,6 +137,9 @@ function load_configs {
     REMOTE_CREDENTIALS=""
     if [[ ! -z $remote_access_username ]] ; then
         REMOTE_CREDENTIALS="-u $remote_access_username -p $remote_access_password"
+        if [[ ! -z $remote_access_authentication_database ]] ; then
+            REMOTE_CREDENTIALS="$REMOTE_CREDENTIALS --authenticationDatabase=$remote_access_authentication_database"
+        fi
     fi
 
     TUNNEL_CREDENTIALS="$tunnel_access_username@$remote_host_url"
