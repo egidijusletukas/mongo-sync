@@ -102,12 +102,13 @@ function load_configs {
     if [ -f "$FILE" ]; then
        eval $(parse_yaml "$FILE")
        success_msg
-    elif [ -z "$local_db" ] || [ -z "$local_host_port" ] || [ -z "$remote_db" ] || [ -z "$remote_host_port" ]; then
+    elif [ -z "$local_db" ] || [ -z "$local_host_url" ] || [ -z "$local_host_port" ] || [ -z "$remote_db" ] || [ -z "$remote_host_url" ] || [ -z "$remote_host_port" ]; then
         config_not_found $config
     fi
 
     # Loads:
     # - $local_db
+    # - $local_host_url
     # - $local_host_port
     # - $local_access_username
     # - $local_access_password
@@ -127,6 +128,13 @@ function load_configs {
     fi
     if [ "$remote_collections" ] ; then
         remote_collections=($remote_collections)
+    fi
+
+    if [[ -z $local_host_url ]] ; then
+        local_host_url="localhost"
+    fi
+    if [[ -z $local_host_port ]] ; then
+        local_host_port="27017"
     fi
 
     LOCAL_CREDENTIALS=""
@@ -218,6 +226,7 @@ function pull {
         for i in "${remote_collections[@]}"
         do
             mongorestore \
+                --host "$local_host_url" \
                 --port "$local_host_port" \
                 -d "$local_db" \
                 $LOCAL_CREDENTIALS \
@@ -226,6 +235,7 @@ function pull {
         done
     else
         mongorestore \
+            --host "$local_host_url" \
             --port "$local_host_port" \
             -d "$local_db" \
             $LOCAL_CREDENTIALS \
@@ -262,6 +272,7 @@ function push {
         for i in "${local_collections[@]}"
         do
             mongodump \
+                --host "$local_host_url" \
                 --port "$local_host_port" \
                 -d "$local_db" \
                 -c "$i" \
@@ -270,6 +281,7 @@ function push {
         done
     else
         mongodump \
+            --host "$local_host_url" \
             --port "$local_host_port" \
             -d "$local_db" \
             $LOCAL_CREDENTIALS \
