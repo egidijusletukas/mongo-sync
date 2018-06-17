@@ -102,8 +102,8 @@ function load_configs {
     if [ -f "$FILE" ]; then
        eval $(parse_yaml "$FILE")
        success_msg
-    elif [ -z "$local_db" ] || [ -z "$local_host_port" ] || [ -z "$remote_db" ] || [ -z "$remote_host_port" ]; then
-        config_not_found $config
+    else
+       config_not_found $config
     fi
 
     # Loads:
@@ -132,6 +132,9 @@ function load_configs {
     LOCAL_CREDENTIALS=""
     if [[ ! -z $local_access_username ]] ; then
         LOCAL_CREDENTIALS="-u $local_access_username -p $local_access_password"
+        if [[ ! -z $local_access_authentication_database ]] ; then
+            LOCAL_CREDENTIALS="$LOCAL_CREDENTIALS --authenticationDatabase=$local_access_authentication_database"
+        fi
     fi
 
     REMOTE_CREDENTIALS=""
