@@ -102,8 +102,8 @@ function load_configs {
     if [ -f "$FILE" ]; then
        eval $(parse_yaml "$FILE")
        success_msg
-    else
-       config_not_found $config
+    elif [ -z "$local_db" ] || [ -z "$local_host_port" ] || [ -z "$remote_db" ] || [ -z "$remote_host_port" ]; then
+        config_not_found $config
     fi
 
     # Loads:
